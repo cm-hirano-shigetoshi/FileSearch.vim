@@ -1,0 +1,11 @@
+base_task:
+    input: pt -g ^
+    opts:
+        - multi
+        - reverse
+        - height=9999
+    preview: eval head -n 10000 {}
+expects:
+    enter:
+        stdout:
+            join:
