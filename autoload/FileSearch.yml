@@ -1,5 +1,5 @@
 base_task:
-    input: pt -g ^
+    input: pt -g ^ . | sed 's`^\./``'
     opts:
         - multi
         - reverse
@@ -9,3 +9,12 @@ expects:
     enter:
         stdout:
             join:
+    f1:
+        continue:
+            input: pt -g ^ ..
+    f2:
+        continue:
+            input: pt -g ^ ../..
+    f3:
+        continue:
+            input: pt -g ^ $(cd ../../.. && pwd)
