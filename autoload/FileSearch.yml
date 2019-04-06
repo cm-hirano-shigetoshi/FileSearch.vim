@@ -18,3 +18,7 @@ expects:
     f3:
         continue:
             input: pt -g ^ $(cd ../../.. && pwd)
+    ctrl-j:
+        continue:
+            input: pt -g ^ $(cd ${q} && pwd)
+            query: ''
