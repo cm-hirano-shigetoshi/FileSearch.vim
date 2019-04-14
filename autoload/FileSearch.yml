@@ -1,7 +1,8 @@
 variables:
     var1:
+    var2: echo '.'
 base_task:
-    input: pt -g ^ . | sed 's`^\./``'
+    input: pt -g ^ $var2 | sed 's`^\./``'
     opts:
         - multi
         - reverse
@@ -10,15 +11,9 @@ base_task:
 expects:
     enter:
         pipe: sed "s%^%$var1%" | tr '\n' ' '
-    f1:
+    ctrl-u:
         continue:
-            input: pt -g ^ ..
-    f2:
-        continue:
-            input: pt -g ^ ../..
-    f3:
-        continue:
-            input: pt -g ^ $(cd ../../.. && pwd)
+            var2: echo "../$var2" | sed 's%/\.$%%'
     ctrl-j:
         continue:
             input: pt -g ^ $(cd ${q} && pwd)
