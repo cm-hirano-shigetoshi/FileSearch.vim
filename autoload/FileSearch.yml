@@ -1,3 +1,5 @@
+variables:
+    var1:
 base_task:
     input: pt -g ^ . | sed 's`^\./``'
     opts:
@@ -7,8 +9,7 @@ base_task:
     preview: eval head -n 10000 {}
 expects:
     enter:
-        stdout:
-            join:
+        pipe: sed "s%^%$var1%" | tr '\n' ' '
     f1:
         continue:
             input: pt -g ^ ..
@@ -22,3 +23,9 @@ expects:
         continue:
             input: pt -g ^ $(cd ${q} && pwd)
             query: ''
+    ctrl-g:
+        continue:
+            input: git ls-files --full-name
+            var1: git rev-parse --show-toplevel | sed 's%$%/%'
+            preview: eval head -n 10000 ${var1}{}
+
