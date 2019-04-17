@@ -20,7 +20,7 @@ expects:
             query: ''
     ctrl-g:
         continue:
-            input: git ls-files --full-name
+            input: git -C $(git rev-parse --show-toplevel) ls-files --full-name
             var1: git rev-parse --show-toplevel | sed 's%$%/%'
             preview: eval head -n 10000 ${var1}{}
 
