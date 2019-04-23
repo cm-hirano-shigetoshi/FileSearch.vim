@@ -1,6 +1,6 @@
 variables:
     var1:
-    var2: echo '.'
+    var2: '.'
 base_task:
     input: pt -g ^ $var2 | sed 's`^\./``'
     opts:
@@ -13,7 +13,7 @@ expects:
         pipe: sed "s%^%$var1%" | tr '\n' ' '
     ctrl-u:
         continue:
-            var2: echo "../$var2" | sed 's%/\.$%%'
+            var2: $(echo "../$var2" | sed 's%/\.$%%')
     ctrl-j:
         continue:
             input: pt -g ^ $(cd ${q} && pwd)
@@ -21,6 +21,6 @@ expects:
     ctrl-g:
         continue:
             input: git -C $(git rev-parse --show-toplevel) ls-files --full-name
-            var1: git rev-parse --show-toplevel | sed 's%$%/%'
+            var1: $(git rev-parse --show-toplevel | sed 's%$%/%')
             preview: eval head -n 10000 ${var1}{}
 
