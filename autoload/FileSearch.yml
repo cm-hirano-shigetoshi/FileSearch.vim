@@ -11,7 +11,7 @@ base_task:
 expects:
     enter:
         pipe: sed "s%^%$var1%" | tr '\n' ' '
-    ctrl-u:
+    ctrl-h:
         continue:
             var2: $(echo "../$var2" | sed 's%/\.$%%')
     ctrl-j:
