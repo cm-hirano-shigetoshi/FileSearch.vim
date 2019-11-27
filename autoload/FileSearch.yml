@@ -1,26 +1,27 @@
-variables:
-    var1:
-    var2: '.'
 base_task:
-    input: pt -g ^ $var2 | sed 's`^\./``'
+    input: bash {ymldir}/select_files.sh .
+    transform: perl {ymldir}/relative_path.pl .
+    preview: echo {} | bash {ymldir}/preview.sh
     opts:
         - multi
         - reverse
+        - header="$(pwd)/"
         - height=9999
-    preview: eval head -n 10000 {}
-expects:
-    enter:
-        pipe: sed "s%^%$var1%" | tr '\n' ' '
-    ctrl-h:
-        continue:
-            var2: $(echo "../$var2" | sed 's%/\.$%%')
-    ctrl-j:
-        continue:
-            input: pt -g ^ $(cd ${q} && pwd)
-            query: ''
-    ctrl-g:
-        continue:
-            input: git -C $(git rev-parse --show-toplevel) ls-files --full-name
-            var1: $(git rev-parse --show-toplevel | sed 's%$%/%')
-            preview: eval head -n 10000 ${var1}{}
-
+    output:
+        enter:
+            - pipe: tr '\n' ' '
+switch_task:
+    ctrl-d:
+        input: bash {ymldir}/select_files.sh . -d
+        output:
+            enter:
+                - pipe: tr '\n' ' '
+    alt-enter:
+        input: bash {ymldir}/select_files.sh $(readlink -e '{pre_content}')/
+        transform: perl {ymldir}/relative_path.pl $(readlink -e '{pre_content}')/
+        query: ''
+        opts:
+            - header="$(readlink -e {pre_content})"
+        output:
+            enter:
+                - pipe: tr '\n' ' '
