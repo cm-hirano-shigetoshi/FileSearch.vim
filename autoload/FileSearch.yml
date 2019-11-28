@@ -1,27 +1,36 @@
 base_task:
-    input: bash {ymldir}/select_files.sh .
-    transform: perl {ymldir}/relative_path.pl .
-    preview: echo {} | bash {ymldir}/preview.sh
+    vars:
+      - var2: $(pwd)
+    input: bash {ymldir}/select_files.sh "{var2}" {var4} {var6}
+    transform: perl {ymldir}/relative_path.pl "{var2}"
     opts:
         - multi
+        - no-sort
         - reverse
-        - header="$(pwd)/"
+        - header="$(echo {var2} | python {ymldir}/norm_path.py -a -t -d)"
         - height=9999
+    preview: echo {} | bash {ymldir}/preview.sh
     output:
-        enter:
-            - pipe: tr '\n' ' '
+      enter:
+        - pipe: python {ymldir}/norm_path.py -a | tr '\n' ' '
 switch_task:
     ctrl-d:
-        input: bash {ymldir}/select_files.sh . -d
-        output:
-            enter:
-                - pipe: tr '\n' ' '
+      vars:
+        - var4: '{var4|-d|}'
+    ctrl-h:
+      vars:
+        - var6: '{var6|-h|}'
+    ctrl-g:
+      vars:
+        - var2: $(git rev-parse --show-toplevel 2>/dev/null || echo "{var2}")
+    alt-u:
+      vars:
+        - var2: $(readlink -e {var2}/..)
     alt-enter:
-        input: bash {ymldir}/select_files.sh $(readlink -e '{pre_content}')/
-        transform: perl {ymldir}/relative_path.pl $(readlink -e '{pre_content}')/
-        query: ''
-        opts:
-            - header="$(readlink -e {pre_content})"
-        output:
-            enter:
-                - pipe: tr '\n' ' '
+      vars:
+        - var2: $(readlink -e {pre_content})
+    alt-j:
+      query: ''
+      vars:
+        - var2: "{pre_query}"
+

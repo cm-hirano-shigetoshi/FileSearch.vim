@@ -2,10 +2,8 @@
 use strict;
 use warnings;
 
-my $prefix = quotemeta($ARGV[0]);
-if ($prefix eq "\\.") {
-    $prefix = "";
-}
+my $p = $ARGV[0] . "/";
+my $prefix = quotemeta($p);
 
 while (<STDIN>) {
     s/[\r\n]//g;
@@ -14,9 +12,9 @@ while (<STDIN>) {
         next;
     }
     if (/^$prefix(.*)$/) {
-        print($1 . "\n");
-    } else {
-        print $_ . "\n";
+        $_ = $1 . "\n";
     }
+    s%^\./%%;
+    print;
 }
 

@@ -1,12 +1,25 @@
 #!/usr/bin/env bash
 set -eu
 
-function parent_dir() {
-  prefix="$1"
-  if [[ "$prefix" = "." ]]; then
-    prefix=""
+target="$1"
+shift
+show_dir=false
+show_hidden=false
+while [[ $# > 0 ]]; do
+  if [[ $1 = "-d" ]]; then
+    show_dir=true
+  elif [[ $1 = "-h" ]]; then
+    show_hidden=true
   fi
-  echo "${prefix}../"
+  shift
+done
+
+function parent_dir() {
+  if [[ "$1" = "/" ]]; then
+    echo "/"
+  else
+    echo "$1/../"
+  fi
 }
 
 function direstories() {
@@ -19,18 +32,21 @@ function direstories() {
 }
 
 function files() {
-  pt -g ^ "$1" 2>/dev/null \
+  options=""
+  if $show_hidden; then
+    options="-U --hidden"
+  fi
+  pt -g ^ "${1}/." $options 2>/dev/null \
     | sed 's%//\+%/%g' \
     | sed 's%^\./%%' \
     | grep -v '^\s*$'
 }
 
-if [[ $# > 1 ]] && [[ $2 = "-d" ]]; then
-  parent_dir "$1" && true
-  direstories "$1" && true
-  files "$1"
+if $show_dir; then
+  parent_dir "$target" && true
+  direstories "$target" && true
+  files "$target"
 else
-  parent_dir "$1" && true
-  files "$1"
+  files "$target"
 fi
 
