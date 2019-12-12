@@ -43,7 +43,6 @@ function files() {
 }
 
 if $show_dir; then
-  parent_dir "$target" && true
   direstories "$target" && true
   files "$target"
 else

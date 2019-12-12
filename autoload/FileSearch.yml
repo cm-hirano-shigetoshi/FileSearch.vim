@@ -2,7 +2,7 @@ base_task:
     vars:
       - var2: $(pwd)
     input: bash {ymldir}/select_files.sh "{var2}" {var4} {var6}
-    transform: perl {ymldir}/relative_path.pl "{var2}"
+    transform: python {ymldir}/norm_path.py --root "{var2}"
     opts:
         - multi
         - no-sort
