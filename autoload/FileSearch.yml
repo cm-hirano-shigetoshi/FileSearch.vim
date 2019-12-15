@@ -9,6 +9,7 @@ base_task:
         - reverse
         - header="$(echo {var2} | python {ymldir}/norm_path.py -a -t -d)"
         - height=9999
+    query: $(echo {arg1} | tr '/.' '  ')
     preview: echo {} | bash {ymldir}/preview.sh
     output:
       enter:
