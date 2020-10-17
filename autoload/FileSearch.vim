@@ -21,12 +21,30 @@ function! FileSearch#gf()
 endfunction
 
 function! FileSearch#FileSearch(file)
-    let out = system("tput cnorm > /dev/tty; " . s:fzfyml . " " . s:yaml . " '" . a:file . "' 2>/dev/tty")
-    if strlen(out) > 0
-        let out = out[:-2]
-        execute("args " . out)
+    if has('nvim')
+        let s:tmpfile = tempname()
+        function! OnFzfExit(job_id, data, event)
+            bd!
+            let lines = readfile(s:tmpfile)
+            if len(lines) == 1
+                execute("args " . lines[0][:-2])
+            endif
+            redraw!
+        endfunction
+        call delete(s:tmpfile)
+        enew
+        setlocal statusline=fzf
+        setlocal nonumber
+        call termopen(s:fzfyml . " " . s:yaml . " '" . a:file . "' > " . s:tmpfile, {'on_exit': 'OnFzfExit'})
+        startinsert
+    else
+        let out = system("tput cnorm > /dev/tty; " . s:fzfyml . " " . s:yaml . " '" . a:file . "' 2>/dev/tty")
+        if strlen(out) > 0
+            let out = out[:-2]
+            execute("args " . out)
+        endif
+        redraw!
     endif
-    redraw!
 endfunction
 
 let &cpo = s:save_cpo
