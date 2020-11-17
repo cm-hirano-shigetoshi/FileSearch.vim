@@ -1,37 +1,21 @@
+variables:
+    dir: $(pwd)
 base_task:
-    vars:
-      - var2: $(pwd)
-    input: bash {ymldir}/select_files.sh "{var2}" {var4} {var6}
-    transform: python {ymldir}/norm_path.py --root "{var2}"
-    opts:
+    source: bash {{yml_dir}}/select_files.sh "{{dir}}"
+    source_transform: python {{yml_dir}}/norm_path.py --root "{{dir}}"
+    options:
         - multi
         - no-sort
         - reverse
-        - header="$(echo {var2} | python {ymldir}/norm_path.py -a -t -d)"
+        - header="$(echo {{dir}} | python {{yml_dir}}/norm_path.py -a -t -d)"
         - height=9999
-    query: $(echo {arg1} | tr '/.' '  ')
-    preview: echo {} | bash {ymldir}/preview.sh
-    output:
+        - query="$(echo {{arg1}} | tr '/.' '  ')"
+        - preview="echo {} | python {{tool_dir}}/main/invisible_test.py erase | bash {{yml_dir}}/preview.sh"
+    post_operations:
       enter:
-        - pipe: python {ymldir}/norm_path.py -a | tr '\n' ' '
-switch_task:
-    ctrl-d:
-      vars:
-        - var4: '{var4|-d|}'
-    ctrl-h:
-      vars:
-        - var6: '{var6|-h|}'
-    ctrl-g:
-      vars:
-        - var2: $(git rev-parse --show-toplevel 2>/dev/null || echo "{var2}")
+        - pipe: python {{yml_dir}}/norm_path.py -a
+        - join
+task_switch:
     alt-u:
-      vars:
-        - var2: $(readlink -e {var2}/..)
-    alt-enter:
-      vars:
-        - var2: $(readlink -e {pre_content})
-    alt-j:
-      query: ''
-      vars:
-        - var2: "{pre_query}"
-
+      variables:
+        dir: $(readlink -e {{dir}}/..)
