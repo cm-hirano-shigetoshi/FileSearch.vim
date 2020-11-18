@@ -3,7 +3,7 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:fzfyml = "fzfyml run"
+let s:fzfyml = "fzfyml3 run"
 let s:yaml = expand('<sfile>:p:h') . "/FileSearch.yml"
 let s:temp = tempname()
 
@@ -26,9 +26,7 @@ function! FileSearch#FileSearch(file)
         function! OnFzfExit(job_id, data, event)
             bd!
             let lines = readfile(s:tmpfile)
-            if len(lines) == 1
-                execute("args " . lines[0][:-2])
-            endif
+            execute("args " . lines[0])
             redraw!
         endfunction
         call delete(s:tmpfile)
