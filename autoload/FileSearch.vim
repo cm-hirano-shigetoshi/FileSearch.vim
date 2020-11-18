@@ -26,8 +26,10 @@ function! FileSearch#FileSearch(file)
         function! OnFzfExit(job_id, data, event)
             bd!
             let lines = readfile(s:tmpfile)
-            execute("args " . lines[0])
-            redraw!
+            if len(lines) > 0
+                execute("args " . lines[0])
+                redraw!
+            endif
         endfunction
         call delete(s:tmpfile)
         enew
