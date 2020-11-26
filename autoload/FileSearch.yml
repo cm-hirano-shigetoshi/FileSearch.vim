@@ -5,12 +5,11 @@ base_task:
     source_transform: python {{yml_dir}}/norm_path.py --root "{{dir}}"
     options:
         - multi
-        - no-sort
         - reverse
         - header="$(echo {{dir}} | python {{yml_dir}}/norm_path.py -a -t -d)"
         - height=9999
         - query="$(echo {{arg1}} | tr '/.' '  ')"
-        - preview="echo {} | python {{tool_dir}}/main/invisible_test.py erase | bash {{yml_dir}}/preview.sh"
+        - preview="echo {} | bash {{yml_dir}}/preview.sh"
     post_operations:
       enter:
         - pipe: python {{yml_dir}}/norm_path.py -a
