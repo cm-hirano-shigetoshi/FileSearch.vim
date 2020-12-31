@@ -1,12 +1,12 @@
-variables:
-    dir: $(pwd)
 base_task:
-    source: bash {{yml_dir}}/select_files.sh "{{dir}}"
+    variables:
+        dir: $(pwd)
+    source: pt -g ^ "{{dir}}"
     source_transform: python {{yml_dir}}/norm_path.py --root "{{dir}}"
     options:
         - multi
         - reverse
-        - header="$(echo {{dir}} | python {{yml_dir}}/norm_path.py -a -t -d)"
+        - header="$(echo "{{dir}}" | python {{yml_dir}}/norm_path.py -a -t -d)"
         - height=9999
         - query="$(echo {{arg1}} | tr '/.' '  ')"
         - preview="echo {} | bash {{yml_dir}}/preview.sh"
@@ -17,4 +17,11 @@ base_task:
 task_switch:
     alt-u:
       variables:
-        dir: $(readlink -e {{dir}}/..)
+        dir: $(readlink -e "{{dir}}"/..)
+    alt-a:
+        source: find "{{dir}}"
+    alt-h:
+        source: find "{{dir}}" -type f
+    alt-d:
+        source: find "{{dir}}" -type d
+
