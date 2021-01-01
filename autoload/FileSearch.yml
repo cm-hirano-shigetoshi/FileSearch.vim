@@ -18,6 +18,8 @@ task_switch:
     alt-u:
       variables:
         dir: $(readlink -e "{{dir}}"/..)
+    alt-f:
+        source: pt -g ^ "{{dir}}"
     alt-a:
         source: find "{{dir}}"
     alt-h:
