@@ -1,29 +1,35 @@
 base_task:
     variables:
-        dir: $(pwd)
-    source: pt -g ^ "{{dir}}"
-    source_transform: python {{yml_dir}}/norm_path.py --root "{{dir}}"
+        origin_path: $(pwd)
+    source: pt -g ^ {{origin_path}} 2>/dev/null
+    source_transform: sed 's%^{{origin_path}}/%%' | python {{tool_dir}}/main/path.py -p relative
     options:
         - multi
         - reverse
-        - header="$(echo "{{dir}}" | python {{yml_dir}}/norm_path.py -a -t -d)"
-        - height=9999
-        - query="$(echo {{arg1}} | tr '/.' '  ')"
-        - preview="echo {} | bash {{yml_dir}}/preview.sh"
+        - header='$(readlink -e {{origin_path}})'
+        - preview='cat {}'
     post_operations:
-      enter:
-        - pipe: python {{yml_dir}}/norm_path.py -a
-        - join
+        enter:
+            - pipe: python {{tool_dir}}/main/path.py
+            - join
 task_switch:
-    alt-u:
-      variables:
-        dir: $(readlink -e "{{dir}}"/..)
     alt-f:
-        source: pt -g ^ "{{dir}}"
+        source: pt -g ^ {{origin_path}} 2>/dev/null
     alt-a:
-        source: find "{{dir}}"
+        source: find {{origin_path}} 2>/dev/null
     alt-h:
-        source: find "{{dir}}" -type f
+        source: find {{origin_path}} -type f 2>/dev/null
     alt-d:
-        source: find "{{dir}}" -type d
+        source: find {{origin_path}} -type d 2>/dev/null
+    alt-l:
+        source: ls -1 {{origin_path}} 2>/dev/null
+        source_transform: ls -l --color=always {{origin_path}} 2>/dev/null | sed 1d
+        post_operations:
+            enter:
+                - pipe: sed 's%^%{{origin_path}}/%' | python {{tool_dir}}/main/path.py
+                - join
+    alt-u:
+        variables:
+            origin_path: '{{origin_path}}/..'
+
 
