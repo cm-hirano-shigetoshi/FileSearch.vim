@@ -6,6 +6,7 @@ base_task:
     options:
         - multi
         - reverse
+        - query="$(echo '{{arg1}}' | tr '/' '\n' | tac | tr '\n' ' ')"
         - header='$(echo {{origin_path}} | python {{tool_dir}}/main/path.py -p absolute -t -s)'
         - preview='bash {{tool_dir}}/main/preview_file.sh {}'
     post_operations:
