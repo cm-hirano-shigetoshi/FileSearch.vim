@@ -9,6 +9,7 @@ base_task:
         - query="$(echo '{{arg1}}' | tr '/' '\n' | tac | tr '\n' ' ')"
         - header='$(echo {{origin_path}} | python {{tool_dir}}/main/path.py -p absolute -t -s)'
         - preview='bash {{tool_dir}}/main/preview_file.sh {}'
+        - height=9999
     post_operations:
         enter:
             - pipe: python {{tool_dir}}/main/path.py

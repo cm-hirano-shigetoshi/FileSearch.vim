@@ -28,8 +28,8 @@ function! FileSearch#FileSearch(file)
             let lines = readfile(s:tmpfile)
             if len(lines) > 0
                 execute("args " . lines[0])
-                redraw!
             endif
+            redraw!
         endfunction
         call delete(s:tmpfile)
         enew
@@ -40,7 +40,6 @@ function! FileSearch#FileSearch(file)
     else
         let out = system("tput cnorm > /dev/tty; " . s:fzfyml . " " . s:yaml . " '" . a:file . "' 2>/dev/tty")
         if strlen(out) > 0
-            let out = out[:-2]
             execute("args " . out)
         endif
         redraw!
